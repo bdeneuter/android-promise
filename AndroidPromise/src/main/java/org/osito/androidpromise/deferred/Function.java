@@ -2,11 +2,13 @@ package org.osito.androidpromise.deferred;
 
 import android.os.AsyncTask;
 
+import java.util.concurrent.Callable;
+
 import static org.osito.androidpromise.deferred.Deferred.newDeferred;
 
-public abstract class Function<T> {
+public class Function<T> {
 
-    public final Promise<T> execute() {
+    public static <T> Promise<T> execute(final Callable<T> callable) {
         final Deferred<T> deferred = newDeferred();
 
         new AsyncTask<Void, Void, Void>() {
@@ -14,7 +16,7 @@ public abstract class Function<T> {
             @Override
             protected Void doInBackground(Void... voids) {
                 try {
-                    deferred.resolve(run());
+                    deferred.resolve(callable.call());
                 } catch(Throwable throwable) {
                     deferred.reject(throwable);
                 }
@@ -24,7 +26,5 @@ public abstract class Function<T> {
 
         return deferred;
     }
-
-    protected abstract T run();
 
 }
