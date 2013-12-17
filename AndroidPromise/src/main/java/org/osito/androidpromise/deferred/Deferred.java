@@ -1,11 +1,6 @@
 package org.osito.androidpromise.deferred;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class Deferred<T> implements  Promise<T> {
-
-    private AtomicInteger priority = new AtomicInteger(0);
-
 
     private TasksHolder tasks = new SameThreadTasksHolder();
     private TasksHolder mainThreadTasks = new MainThreadTasksHolder();
