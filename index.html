@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Android-promise : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Android-promise</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/bdeneuter/android-promise">View on GitHub</a>
+
+          <h1 id="project_title">Android-promise</h1>
+          <h2 id="project_tagline"></h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/bdeneuter/android-promise/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/bdeneuter/android-promise/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h3>
+<a name="promisedeferred" class="anchor" href="#promisedeferred"><span class="octicon octicon-link"></span></a>Promise/Deferred</h3>
+
+<p>A deferred object allows you to separate the following two concerns:</p>
+
+<ul>
+<li>Work on the background</li>
+<li>Doing something with the result</li>
+</ul><p>Using the api should be easy and straight forward without too much boiler plate.
+To execute code in the background:</p>
+
+<div class="highlight highlight-java"><pre><span class="n">Promise</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">promise</span> <span class="o">=</span> <span class="n">Function</span><span class="o">.</span><span class="na">execute</span><span class="o">(</span><span class="k">new</span> <span class="n">Callable</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;()</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">call</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        <span class="c1">// This method will run on a background thread</span>
+        <span class="k">return</span> <span class="s">"Hello world!"</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+</pre></div>
+
+<p>Or in Android studio it will be readable like this:</p>
+
+<div class="highlight highlight-java"><pre><span class="n">Promise</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">promise</span> <span class="o">=</span> <span class="n">execute</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="o">{</span><span class="k">return</span> <span class="s">"Hello world!"</span><span class="o">;});</span>
+</pre></div>
+
+<p>This promise can be used to add tasks that needs to be executed on success or on error.
+An example:</p>
+
+<div class="highlight highlight-java"><pre><span class="n">promise</span><span class="o">.</span><span class="na">thenOnMainThread</span><span class="o">(</span><span class="k">new</span> <span class="n">Task</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;()</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">(</span><span class="n">String</span> <span class="n">message</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">getContext</span><span class="o">(),</span> <span class="n">message</span><span class="o">,</span> <span class="n">LENGTH_LONG</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">})</span>
+<span class="o">.</span><span class="na">onErrorOnMainThread</span><span class="o">(</span><span class="k">new</span> <span class="n">Task</span><span class="o">&lt;</span><span class="n">Throwable</span><span class="o">&gt;()</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">(</span><span class="n">Throwable</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">getContext</span><span class="o">(),</span> <span class="s">"Oops!"</span><span class="o">,</span> <span class="n">LENGTH_LONG</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+</pre></div>
+
+<p>And in Android Studio it will look like:</p>
+
+<div class="highlight highlight-java"><pre><span class="n">promise</span><span class="o">.</span><span class="na">thenOnMainThread</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="o">{</span><span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">getContext</span><span class="o">(),</span> <span class="n">message</span><span class="o">,</span> <span class="n">LENGTH_LONG</span><span class="o">);})</span>
+       <span class="o">.</span><span class="na">onErrorOnMainThread</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="o">{</span><span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">getContext</span><span class="o">(),</span> <span class="s">"Oops!"</span><span class="o">,</span> <span class="n">LENGTH_LONG</span><span class="o">);});</span>
+</pre></div>
+
+<p>You don't have to worry about the promise already been resolved or not. If the promise is not resolved, the task will be scheduled to be executed when the promise is resolved. 
+The task will be executed immediately if the promise is already resolved.
+The order of the tasks is respected for tasks that are scheduled on the same thread.</p>
+
+<h3>
+<a name="threads" class="anchor" href="#threads"><span class="octicon octicon-link"></span></a>Threads</h3>
+
+<p>You can schedule tasks to be executed on different threads:</p>
+
+<ul>
+<li>
+<strong>then(Task), onError(Task):</strong> 
+The task will be executed on the same thread that resolved the promise</li>
+<li>
+<strong>thenOnMainThread(Task), onErrorOnMainThread(Task):</strong> The task will be executed on the main thread. On this thread the UI can be updated.</li>
+<li>
+<strong>thenOnBackgroundThread(Task), onErrorOnBackgroundThread(Task):</strong> The task will not be executed on the main thread. If the current thread is the main thread, the task will be executed on a background thread.</li>
+<li>
+<strong>thenAsync(Task), onErrorAsync(Task):</strong> The task will always be executed on a new thread.</li>
+</ul>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Android-promise maintained by <a href="https://github.com/bdeneuter">bdeneuter</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
