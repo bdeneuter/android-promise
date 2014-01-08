@@ -1,0 +1,3 @@
+Deploy to maven central: ./gradlew uploadArchives
+
+Change the version in the gradle.properties
