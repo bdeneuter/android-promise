@@ -1,3 +1,4 @@
 Deploy to maven central: ./gradlew uploadArchives
 
 Change the version in the gradle.properties
+See also http://gmariotti.blogspot.be/2013/09/publish-aar-file-to-maven-central-with.html
