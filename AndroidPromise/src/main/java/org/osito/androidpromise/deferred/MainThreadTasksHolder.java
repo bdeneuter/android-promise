@@ -9,41 +9,57 @@ class MainThreadTasksHolder<T> extends SameThreadTasksHolder<T> {
 
     @Override
     protected void notifyListener(final Task<T> task) {
-        HANDLER.post(new Runnable() {
-            @Override
-            public void run() {
-                MainThreadTasksHolder.super.notifyListener(task);
-            }
-        });
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            super.notifyListener(task);
+        } else {
+            HANDLER.post(new Runnable() {
+                @Override
+                public void run() {
+                    MainThreadTasksHolder.super.notifyListener(task);
+                }
+            });
+        }
     }
 
     @Override
     protected void notifyErrorListener(final Task<Throwable> task) {
-        HANDLER.post(new Runnable() {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            super.notifyErrorListener(task);
+        } else {
+            HANDLER.post(new Runnable() {
             @Override
             public void run() {
                 MainThreadTasksHolder.super.notifyErrorListener(task);
             }
         });
+        }
     }
 
     @Override
     protected void notifyListeners(final T data) {
-        HANDLER.post(new Runnable() {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            super.notifyListeners(data);
+        } else {
+            HANDLER.post(new Runnable() {
             @Override
             public void run() {
                 MainThreadTasksHolder.super.notifyListeners(data);
             }
         });
+        }
     }
 
     @Override
     protected void notifyErrorListeners(final Throwable throwable) {
-        HANDLER.post(new Runnable() {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            super.notifyErrorListeners(throwable);
+        } else {
+            HANDLER.post(new Runnable() {
             @Override
             public void run() {
                 MainThreadTasksHolder.super.notifyErrorListeners(throwable);
             }
         });
+        }
     }
 }
