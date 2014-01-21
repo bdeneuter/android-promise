@@ -8,16 +8,13 @@ import static org.osito.androidpromise.deferred.Deferred.newDeferred;
 
 public class Function<T> {
 
-    private static boolean sync;
-    private static Executor executor = newSingleThreadExecutor();
-    private static boolean logStackTrace;
+    static boolean sync;
+    private static Executable executable = new Executable(newSingleThreadExecutor());
+    static boolean logStackTrace;
+
 
     public static void logOriginalStackTraceOnError(boolean enable) {
         Function.logStackTrace = enable;
-    }
-
-    public static void setExecutor(Executor executor) {
-        Function.executor = executor;
     }
 
     public static void enableAlwaysSyncCalls() {
@@ -32,16 +29,12 @@ public class Function<T> {
         if (sync) {
             return executeSync(callable);
         } else {
-            final Deferred<T> deferred = newDeferred();
-            if (logStackTrace) {
-                executor.execute(new DelegateRunnableWithStackTrace<T>(callable, deferred));
-            } else {
-                executor.execute(new DelegateRunnable<T>(callable, deferred));
-            }
-            return deferred;
+            return executable.execute(callable);
         }
+    }
 
-
+    public static Executable on(Executor executor) {
+        return new Executable(executor);
     }
 
     public static <T> Promise<T> executeSync(Callable<T> callable) {
@@ -53,5 +46,7 @@ public class Function<T> {
         }
         return deferred;
     }
+
+
 
 }
