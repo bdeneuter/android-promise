@@ -10,12 +10,6 @@ public class Function<T> {
 
     static boolean sync;
     private static Executable executable = new Executable(newSingleThreadExecutor());
-    static boolean logStackTrace;
-
-
-    public static void logOriginalStackTraceOnError(boolean enable) {
-        Function.logStackTrace = enable;
-    }
 
     public static void enableAlwaysSyncCalls() {
         sync = true;
@@ -26,6 +20,14 @@ public class Function<T> {
     }
 
     public static <T> Promise<T> execute(final Callable<T> callable) {
+        if (sync) {
+            return executeSync(callable);
+        } else {
+            return executable.execute(callable);
+        }
+    }
+
+    public static <T> Promise<T> execute(final PromiseCallable<T> callable) {
         if (sync) {
             return executeSync(callable);
         } else {
@@ -47,6 +49,8 @@ public class Function<T> {
         return deferred;
     }
 
-
+    public static <T> Promise<T> executeSync(PromiseCallable<T> callable) {
+        return callable.call();
+    }
 
 }

@@ -79,4 +79,25 @@ public class Deferred<T> implements  Promise<T> {
         asyncTasks.reject(throwable);
     }
 
+    @Override
+    public <V> Promise<V> convert(final Converter<T, V> converter) {
+        final Deferred<V> deferred = newDeferred();
+        then(new Task<T>() {
+            @Override
+            public void run(T data) {
+                try {
+                    deferred.resolve(converter.transform(data));
+                } catch (Exception ex) {
+                    deferred.reject(ex);
+                }
+            }
+        });
+        onError(new Task<Throwable>() {
+            @Override
+            public void run(Throwable data) {
+                deferred.reject(data);
+            }
+        });
+        return deferred;
+    }
 }

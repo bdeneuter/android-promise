@@ -18,4 +18,6 @@ public interface Promise<T> {
 
     Promise<T> onErrorAsync(Task<Throwable> task);
 
+    <V> Promise<V> convert(Converter<T, V> converter);
+
 }

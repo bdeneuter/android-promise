@@ -13,14 +13,20 @@ public class Executable {
         this.executor = executor;
     }
 
+    public <V> Promise<V> execute(final PromiseCallable<V> callable) {
+        final Deferred<V> deferred = newDeferred();
+        Runnable runnable = new DelegatePromiseRunnable<V>(callable, deferred);
+        if (Function.sync) {
+            runnable.run();
+        } else {
+            executor.execute(runnable);
+        }
+        return deferred;
+    }
+
     public <V> Promise<V> execute(Callable<V> callable) {
         final Deferred<V> deferred = newDeferred();
-        Runnable runnable;
-        if (Function.logStackTrace) {
-            runnable = new DelegateRunnableWithStackTrace<V>(callable, deferred);
-        } else {
-            runnable = new DelegateRunnable<V>(callable, deferred);
-        }
+        Runnable runnable = new DelegateRunnable<V>(callable, deferred);
         if (Function.sync) {
             runnable.run();
         } else {
