@@ -3,13 +3,16 @@ package org.osito.androidpromise.deferred;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 
-import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import static org.osito.androidpromise.deferred.Deferred.newDeferred;
 
 public class Function<T> {
 
     static boolean sync;
-    private static Executable executable = new Executable(newSingleThreadExecutor());
+    private static Executable executable = new Executable(new AsyncTaskExecutor());
+
+    public static void setExecutor(Executor executor) {
+        executable = new Executable(executor);
+    }
 
     public static void enableAlwaysSyncCalls() {
         sync = true;
