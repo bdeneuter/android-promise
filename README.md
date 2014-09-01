@@ -1,6 +1,8 @@
 android-promise
 ===============
 
+NOTE: I DEPRECATED THIS LIBRARY AS I AM USING NOW RXJAVA FOR ASYNC
+
 A simple library for promise/deferred in Android. Instead of using an AsyncTask, you can return a deferred to the caller while you start work on a background thread. When the work is finished you can resolve or reject the deferred.
 The users of the promise object can add tasks that need to be executed when the deferred is resolved or rejected. The user can specify on which thread this task needs to be executed.
 
